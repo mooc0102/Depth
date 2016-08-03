@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/libs/internal_impl-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/internal_impl-23.0.1-40f83dcd1aaa4f0fb3ef50bba68071c675fceab0.jar" />
+    </item>
+    <item
+        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/8.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="4477ea44f5ec5ad064022a22691732d7638ff197">
+        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/classes-b5624e761e01dd4df527fe1285aa26e68661fb52.jar" />
+    </item>
+    <item
+        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.1.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d0dda274b703dd9c5bb056867649d22b4171ae7d">
+        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/classes-971616e812416234cd25ec2d81f167de5efcba67.jar" />
+    </item>
+    <item
+        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/classes-058e6fe275defcb779c29661a4f293dff435a879.jar" />
+    </item>
+    <item
+        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/Depth_v2/openCVLibrary300/unspecified/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="01b07a24ed92bfb719e30caa6e9fd863226be228">
+        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/classes-6a25d37cc803a70231ef56d5bd039f31884775ba.jar" />
+    </item>
+    <item
+        jar="/Users/YuCheng/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.1/support-annotations-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/support-annotations-23.0.1-a6fa6f46824f8d1dfbd939367c252713d8e749bd.jar" />
+    </item>
+    <item
+        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/classes-765a6924401b20ea146abf15099fe5a67d27deb2.jar" />
+    </item>
+
+</items>
