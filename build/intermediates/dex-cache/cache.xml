@@ -2,53 +2,60 @@
 <items version="2" >
 
     <item
-        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/libs/internal_impl-23.0.1.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
-        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/internal_impl-23.0.1-40f83dcd1aaa4f0fb3ef50bba68071c675fceab0.jar" />
-    </item>
-    <item
-        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/8.1.0/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="4477ea44f5ec5ad064022a22691732d7638ff197">
-        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/classes-b5624e761e01dd4df527fe1285aa26e68661fb52.jar" />
-    </item>
-    <item
-        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.1.0/jars/classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="d0dda274b703dd9c5bb056867649d22b4171ae7d">
-        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/classes-971616e812416234cd25ec2d81f167de5efcba67.jar" />
-    </item>
-    <item
-        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.0.1/jars/classes.jar"
-        jumboMode="false"
+        jar="D:\Android Workspace\Depth\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jumboMode="true"
         revision="23.0.1"
         sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
-        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/classes-058e6fe275defcb779c29661a4f293dff435a879.jar" />
+        <dex dex="D:\Android Workspace\Depth\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.0.1_2824e2c56e92cecdef5ebf69afb1756f7a9ce07e\classes.dex" />
     </item>
     <item
-        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/Depth_v2/openCVLibrary300/unspecified/jars/classes.jar"
-        jumboMode="false"
+        jar="D:\Android Workspace\Depth\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-appindexing\8.1.0\jars\classes.jar"
+        jumboMode="true"
         revision="23.0.1"
-        sha1="01b07a24ed92bfb719e30caa6e9fd863226be228">
-        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/classes-6a25d37cc803a70231ef56d5bd039f31884775ba.jar" />
+        sha1="4477ea44f5ec5ad064022a22691732d7638ff197">
+        <dex dex="D:\Android Workspace\Depth\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.gms-play-services-appindexing-8.1.0_60a4dc4c8ae24b70a951de944fbfcc53875cb857\classes.dex" />
     </item>
     <item
-        jar="/Users/YuCheng/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.0.1/support-annotations-23.0.1.jar"
-        jumboMode="false"
+        jar="D:\Android Workspace\Depth\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
         revision="23.0.1"
-        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
-        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/support-annotations-23.0.1-a6fa6f46824f8d1dfbd939367c252713d8e749bd.jar" />
+        sha1="48b7bd8ef8b8751d8d8b6becb46240ba72bc9b83">
+        <dex dex="D:\Android Workspace\Depth\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_0e7d760d1723892b8c3a30c649720ccbfdf0a150\classes.dex" />
     </item>
     <item
-        jar="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.0.1/jars/classes.jar"
-        jumboMode="false"
+        jar="D:\Android Workspace\Depth\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.1\jars\classes.jar"
+        jumboMode="true"
         revision="23.0.1"
         sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
-        <dex dex="/Users/YuCheng/Documents/Depth_v2/app/build/intermediates/pre-dexed/debug/classes-765a6924401b20ea146abf15099fe5a67d27deb2.jar" />
+        <dex dex="D:\Android Workspace\Depth\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-23.0.1_16106347999e756291564f9eab3d46df0af78462\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android Workspace\Depth\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="D:\Android Workspace\Depth\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.0.1_0a6018e8bb826758aaba274e2e25fa3b1f90d67e\classes.dex" />
+    </item>
+    <item
+        jar="D:\Application\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="D:\Android Workspace\Depth\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.0.1_e1636c6fcb2e21096eff018c60ef2d68670d539e\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android Workspace\Depth\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\8.1.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="d0dda274b703dd9c5bb056867649d22b4171ae7d">
+        <dex dex="D:\Android Workspace\Depth\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.google.android.gms-play-services-basement-8.1.0_7f1b0a203db4ec3bfc54351ec11116a4650c5cf5\classes.dex" />
+    </item>
+    <item
+        jar="D:\Android Workspace\Depth\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="37cd7546f7c1ca3f9cad061c19526e1a8ecc5f3a">
+        <dex dex="D:\Android Workspace\Depth\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_bddf33ffeb47c77e9d2b74de5fb7e984d66ebf9c\classes.dex" />
     </item>
 
 </items>

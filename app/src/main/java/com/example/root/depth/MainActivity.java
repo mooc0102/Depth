@@ -1,22 +1,29 @@
 package com.example.root.depth;
 
-import android.app.ProgressDialog;
+
+import android.Manifest;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,10 +34,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -42,11 +48,13 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import org.opencv.android.Utils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     ImageView iv = null;
     static Uri uri = null;
@@ -55,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     static Mat smat, hmat, rmat, cmat, bmat, resultmat;
     static boolean isLabel[][];
     static int objCluster1[][],objCluster[][];
-    double truedepth[][];
+    double truedepth[][];   //
     ProgressBar myProgressBar;
     TextView myTextView;
     int myProgress = 0;
@@ -74,7 +82,56 @@ public class MainActivity extends AppCompatActivity {
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
-    private GoogleApiClient client;
+
+    Button b;
+    Button buttonCamera;
+
+
+    // FISH
+    // UI
+    private TextView locationTv;
+
+    // format
+    DecimalFormat df = new DecimalFormat("#");
+
+    // Compass Sensors
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private Sensor mMagnetometer;
+    private OrientationSensor os;
+
+    // Compass listeners
+    private MyCompassListener myListener;
+    private MyListenerOri mo;
+
+    // Compass sensing flags
+    static boolean accFlag = false;
+    static boolean magFlag = false;
+
+    // Compass accuracy
+    String accAccuracy = "";
+    String magAccuracy = "";
+    String graAccuracy = "";
+
+    // Compass results
+    float azimuth;
+    float pitch;
+
+    private Date date;
+
+    // location sensors
+    LocationManager locationManager;
+    final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    final int MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 2;
+    private boolean getService = false;     //是否已開啟定位服務
+
+    // location result
+    double lat;
+    double lon;
+    double GPSaccuracy;
+    //
+    Date GPStime;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +139,79 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button b = (Button) this.findViewById(R.id.buttonObj);
-        Button buttonCamera = (Button)findViewById(R.id.camera);
+
+        setUI();
+        setSensors();
+        setLocation();
+
+    }
+
+    //FISH
+    void setLocation() {
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+        {
+            getService = true;
+            //如果GPS或網路定位開啟，呼叫locationServiceInitial()更新位置
+            locationServiceInitial();
+        }
+        else
+        {
+            Toast.makeText(this, "請開啟定位服務", Toast.LENGTH_LONG).show();
+            getService = true; //確認開啟定位服務
+            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)); //開啟設定頁面
+        }
+    }
+    //FISH
+    void locationServiceInitial()
+    {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
+        }
+
+
+        // Log.i("GPS",locationManager.isProviderEnabled(LocationManager. GPS_PROVIDER)+"");
+        // Log.i("NETWORK",locationManager.isProviderEnabled(LocationManager. NETWORK_PROVIDER)+"");
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(!getLocation(location))
+        {
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            getLocation(location);
+        }
+
+        //  locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+    }
+
+    private boolean getLocation(Location location)
+    {    //將定位資訊顯示在畫面中
+        if (location != null)
+        {
+            Toast.makeText(this, location.getProvider(), Toast.LENGTH_LONG).show();
+
+            Log.i("LOCATION",location.getProvider());
+
+            lon = location.getLongitude();    //取得經度
+            lat = location.getLatitude();    //取得緯度
+            GPSaccuracy = location.getAccuracy();
+            //locationTv.setText(latitude + " " + longitude + " " + location.getBearing());
+            return true;
+
+        }
+        else
+        {
+            Toast.makeText(this, "無法定位座標", Toast.LENGTH_LONG).show();
+        }
+        return false;
+    }
+
+    void setUI()
+    {
+
+        b = (Button) this.findViewById(R.id.buttonObj);
+        buttonCamera = (Button)findViewById(R.id.camera);
         myProgressBar = (ProgressBar) findViewById(R.id.progressbar);
         myProgressBar.setProgress(myProgress);
         myProgressBar.setVisibility(View.INVISIBLE);
@@ -136,12 +264,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        locationTv = (TextView)findViewById(R.id.locationTv);
     }
 
 
@@ -196,6 +319,10 @@ double reDis(int x, int y, int x1, int y1){
                     break;
                 case 6:
                     myTextView.setVisibility(View.VISIBLE);
+                    iv.setEnabled(true);
+                    b.setEnabled(true);
+                    buttonCamera.setEnabled(true);
+
                     break;
                 case 7:
                     myTextView.setText("Depth: "+String.format("%.3g%n", resd) + "m");
@@ -209,17 +336,55 @@ double reDis(int x, int y, int x1, int y1){
     public void onResume() {
         super.onResume();
         overridePendingTransition(0, 0);
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback);
 
+        setListener();
+        // location
 
     }
+
+
+    void setListener()
+    {
+        // compass
+        if (os != null)
+        {
+            os.Register(this, 1000);
+        }
+        else if (mAccelerometer != null && mMagnetometer != null)
+        {
+            mSensorManager.registerListener(myListener, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
+            mSensorManager.registerListener(myListener, mMagnetometer, SensorManager.SENSOR_DELAY_GAME);
+        }
+
+        //  location
+        if (getService)
+        {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 1, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 1, locationListener);
+        }
+    }
+
+
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS: {
-
 
                 }
                 break;
@@ -231,12 +396,52 @@ double reDis(int x, int y, int x1, int y1){
         }
     };
 
+    void setResult()
+    {
+        if(os!=null)
+        {
+            locationTv.setText("Azimuth =  " + df.format(azimuth)+" pitch = "+ df.format(pitch)+"\n"+
+                    "accuracy:\n" +
+                    "  magnetic = "+magAccuracy+"\n"+
+                    "  gravity = "+graAccuracy+"\n"+
+                    "Lat = "+lat+"\n"+
+                    "Lon = "+lon+"\n"+
+                    "68% accuracy = " +  df.format(GPSaccuracy) + "(m)");
+        }
+        else if(mAccelerometer != null && mMagnetometer != null)
+        {
+            locationTv.setText("Azimuth =  " + df.format(azimuth)+" pitch = "+ df.format(pitch)+"\n"+
+                    "accuracy:\n" +
+                    "  magnetic = "+magAccuracy+"\n"+
+                    "  accelerometer = "+accAccuracy+"\n"+
+                    "Lat = "+lat+"\n"+
+                    "Lon = "+lon+"\n"+
+                    "68% accuracy = " +  df.format(GPSaccuracy) + "(m)");
+        }
+        else
+        {
+            locationTv.setText("cannot get azimuth information!"+"\n"+
+                    "Lat = "+lat+"\n"+
+                    "Lon = "+lon+"\n"+
+                    "68% accuracy = " + df.format(GPSaccuracy) + "(m)");
+        }
+
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode != RESULT_OK)
+        {
+            return;
+        }
+
+
+
         // 取得檔案的 Uri
         if(requestCode==0) {
             uri = data.getData();
@@ -280,6 +485,10 @@ double reDis(int x, int y, int x1, int y1){
 
             myTextView.setVisibility(View.INVISIBLE);
             myTextView.setText("");
+            iv.setEnabled(false);
+            b.setEnabled(false);
+            buttonCamera.setEnabled(false);
+
 
 
             new Thread(new Runnable() {
@@ -1339,7 +1548,6 @@ double reDis(int x, int y, int x1, int y1){
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "Main Page", // TODO: Define a title for the content shown.
@@ -1350,7 +1558,6 @@ double reDis(int x, int y, int x1, int y1){
                 // TODO: Make sure this auto-generated app deep link URI is correct.
                 Uri.parse("android-app://com.example.root.depth/http/host/path")
         );
-        AppIndex.AppIndexApi.start(client, viewAction);
     }
 
     @Override
@@ -1369,7 +1576,241 @@ double reDis(int x, int y, int x1, int y1){
                 // TODO: Make sure this auto-generated app deep link URI is correct.
                 Uri.parse("android-app://com.example.root.depth/http/host/path")
         );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
     }
+
+    protected void onPause() {
+        super.onPause();
+        unsetListener();
+
+    }
+
+    void unsetListener()
+    {
+        // compass
+        if (os != null) {
+            os.Unregister();
+        }
+        else if (mAccelerometer != null && mMagnetometer != null)
+        {
+            mSensorManager.unregisterListener(myListener, mAccelerometer);
+            mSensorManager.unregisterListener(myListener, mMagnetometer);
+
+        }
+
+        // location
+        if (getService) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            locationManager.removeUpdates(locationListener);    //離開頁面時停止更新
+        }
+    }
+
+
+    //FISH
+    class MyCompassListener implements SensorEventListener
+    {
+        float[] mLastAccelerometer = new float[3];
+        float[] mLastMagnetometer = new float[3];
+        float[] mR = new float[9];
+        float[] mOrientation = new float[3];
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+
+            if(!isMoreThanXsec(1000))
+            {
+                return;
+            }
+
+            if (event.sensor == mAccelerometer)
+            {
+                mLastAccelerometer = event.values.clone();
+                accAccuracy = accuracyString(event.accuracy);
+                accFlag = true;
+
+            }
+            if (event.sensor == mMagnetometer)
+            {
+                mLastMagnetometer = event.values.clone();
+                magAccuracy = accuracyString(event.accuracy);
+                magFlag = true;
+            }
+            if(accFlag & magFlag)
+            {
+                SensorManager.getRotationMatrix(mR, null, mLastAccelerometer, mLastMagnetometer);
+                SensorManager.getOrientation(mR, mOrientation);
+                float azimuthInRadians = mOrientation[0];
+
+                int rotation = getWindowManager().getDefaultDisplay().getRotation();
+                float screen_adjustment = 0;
+                float pitchInRadians;
+
+                switch(rotation)
+                {
+                    case Surface.ROTATION_0:
+                        screen_adjustment =          0;
+                        break;
+                    case Surface.ROTATION_90:
+                        screen_adjustment =   (float)Math.PI/2;
+                        break;
+                    case Surface.ROTATION_180:
+                        screen_adjustment =   (float)Math.PI;
+                        break;
+                    case Surface.ROTATION_270:
+                        screen_adjustment = 3*(float)Math.PI/2;
+                        break;
+                }
+                azimuth = (float)(Math.toDegrees(azimuthInRadians+screen_adjustment)+360)%360;
+
+                pitchInRadians = mOrientation[1];
+ //               Log.d("Y",(float)(Math.toDegrees(mOrientation[2]))+"");
+
+                pitch = -(float)(Math.toDegrees(pitchInRadians))-90;
+                setResult();
+            }
+            else
+            {
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+            Log.i("SENSOR","onAccuracyChanged, "+sensor.getName()+" accuracy = " + accuracy );
+        }
+    }
+
+    // FISH
+    private boolean isMoreThanXsec(int x)
+    {
+        if(date == null){
+            date = new Date();
+            return true;
+        }
+
+        Date now = new Date();
+
+        if(now.getTime()-date.getTime() >= x)
+        {
+            date = now;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    // FISH
+    private String accuracyString(int accuracy)
+    {
+        switch(accuracy)
+        {
+            case SensorManager.SENSOR_STATUS_ACCURACY_HIGH:
+                return "HIGH";
+            case SensorManager.SENSOR_STATUS_ACCURACY_MEDIUM:
+                return "MEDIUM";
+            case SensorManager.SENSOR_STATUS_ACCURACY_LOW:
+                return "LOW";
+            case SensorManager.SENSOR_STATUS_NO_CONTACT:
+                return "NO CONTACT";
+            case SensorManager.SENSOR_STATUS_UNRELIABLE:
+                return "UNRELIABLE";
+        }
+        return "";
+    }
+
+    // FISH
+    void setSensors()
+    {
+        // compass
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
+
+        if(mSensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY)!=null && mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)!=null)
+        {
+            mo = new MyListenerOri();
+            os = new OrientationSensor(mSensorManager, mo);
+        }
+        else if(mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)!=null && mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)!=null)
+        {
+            mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            mMagnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+            myListener = new MyCompassListener();
+        }
+
+        // location
+
+    }
+
+
+    //FISH
+    class MyListenerOri implements SensorEventListener
+    {
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+
+            if(!isMoreThanXsec(1000))
+            {
+                return;
+            }
+            azimuth = (float)(Math.toDegrees(os.m_azimuth_radians)+360)%360;
+
+            graAccuracy = accuracyString(os.m_GravityAccuracy);
+            magAccuracy = accuracyString(os.m_MagneticFieldAccuracy);
+
+            pitch = (float)(Math.toDegrees(os.m_pitch_radians))-90;
+            setResult();
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            //   Log.i("SENSOR","onAccuracyChanged, "+sensor.getName()+" accuracy = "+accuracy);
+        }
+    }
+
+    // FISH
+    LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            // Called when a new location is found by the network location provider.
+
+
+            if( location.getProvider().equals(LocationManager.GPS_PROVIDER))
+            {
+                GPStime = new Date();
+                getLocation(location);
+            }
+            else
+            {
+                Date tmpDate = new Date();
+                if(GPStime == null)
+                {
+                    getLocation(location);
+                }
+                else if(tmpDate.getTime()-GPStime.getTime() >= 3000)
+                {
+                    getLocation(location);
+                }
+            }
+            // locationTv.setText(location.getLatitude()+" "+location.getLongitude()+" "+location.getAccuracy());
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+        public void onProviderEnabled(String provider) {}
+
+        public void onProviderDisabled(String provider) {}
+    };
+
 }
